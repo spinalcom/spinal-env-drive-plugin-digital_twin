@@ -6,7 +6,9 @@
   "scripts": {
     "build": "rm -fr build && tsc",
     "dev": "rm -fr build && tsc --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npm run create_plugin_template",
+    "create_plugin_template": "create_plugin_template"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
