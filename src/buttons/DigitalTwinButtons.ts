@@ -1,4 +1,11 @@
 import { FileSystem } from 'spinal-core-connectorjs_type';
+import {
+  DIGITAL_TWIN_OPEN_MANAGER_BUTTON,
+  DIGITAL_TWIN_OPEN_MANAGER_BUTTON_DESCRIPTION,
+  DIGITAL_TWIN_FILE_MODEL_TYPE,
+  DIGITAL_TWIN_CREATE_MANAGER_BUTTON,
+  DIGITAL_TWIN_CREATE_MANAGER_BUTTON_DESCRIPTION,
+} from '../contant';
 
 const spinalEnvDriveCore = require('spinal-env-drive-core');
 require('spinal-core-connectorjs');
@@ -15,8 +22,8 @@ angular
       class SpinalDriveAppFileExplorerOpenDigitalTwinManager extends
         spinalEnvDriveCore.SpinalDrive_App {
         constructor() {
-          super('OpenDigitalTwinManager', 'Open the Digital twin manager',
-                35, 'settings_applications', 'Open the  Digital twin manager');
+          super('OpenDigitalTwinManager', DIGITAL_TWIN_OPEN_MANAGER_BUTTON,
+                35, 'settings_applications', DIGITAL_TWIN_OPEN_MANAGER_BUTTON_DESCRIPTION);
           this.order_priority = 0;
         }
         action(obj) {
@@ -26,7 +33,8 @@ angular
 
         is_shown(f) {
           const modelType = f.file.model_type;
-          return (modelType.toLocaleLowerCase() === 'digital twin');
+          return (modelType.toLocaleLowerCase() ===
+            DIGITAL_TWIN_FILE_MODEL_TYPE.toLocaleLowerCase());
         }
       }
       anyWin.spinalDrive_Env.add_applications(
@@ -38,8 +46,8 @@ angular
       class SpinalDriveAppCurrFileExplorerCreateDigitalTwinManager extends
         spinalEnvDriveCore.SpinalDrive_App {
         constructor() {
-          super('CreateDigitalTwin', 'Create a Digital twin',
-                36, 'location_city', 'Create a Digital twin');
+          super('CreateDigitalTwin', DIGITAL_TWIN_CREATE_MANAGER_BUTTON,
+                36, 'location_city', DIGITAL_TWIN_CREATE_MANAGER_BUTTON_DESCRIPTION);
           this.order_priority = 0;
         }
         action(obj) {

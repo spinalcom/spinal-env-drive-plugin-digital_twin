@@ -34,6 +34,7 @@ import {
 import matchKnownExt from '../utils/knownExt';
 import { BimFileService, AssetFile } from './BimFileService';
 import { fileVersionState } from './fileVersionState';
+import { DIGITAL_TWIN_FILE_MODEL_TYPE, DIGITAL_TWIN_PANEL_TITLE } from '../contant';
 
 angular
   .module('app.services')
@@ -87,7 +88,7 @@ angular
           if (factory.controllerOnChange === null) {
             const cfg = {
               isClosable: true,
-              title: 'Digital Twin Manager',
+              title: DIGITAL_TWIN_PANEL_TITLE,
               type: 'component',
               componentName: 'SpinalHome',
               width: 20,
@@ -172,7 +173,7 @@ angular
       const newDigitalTwin = (directory: spinal.Directory<any>, filename: string) => {
         const graph = new SpinalGraph();
         directory.force_add_file(filename, graph, {
-          model_type: 'Digital Twin',
+          model_type: DIGITAL_TWIN_FILE_MODEL_TYPE,
         });
       };
       const getFilesDropped = (): {

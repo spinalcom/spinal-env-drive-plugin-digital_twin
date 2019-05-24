@@ -39,6 +39,7 @@ const spinal_env_viewer_graph_service_1 = require("spinal-env-viewer-graph-servi
 const knownExt_1 = require("../utils/knownExt");
 const BimFileService_1 = require("./BimFileService");
 const fileVersionState_1 = require("./fileVersionState");
+const contant_1 = require("../contant");
 angular
     .module('app.services')
     .controller(digitalTwinManagerCtrl_1.default.ctrlName, digitalTwinManagerCtrl_1.default.ctrl);
@@ -86,7 +87,7 @@ angular
                 if (factory.controllerOnChange === null) {
                     const cfg = {
                         isClosable: true,
-                        title: 'Digital Twin Manager',
+                        title: contant_1.DIGITAL_TWIN_PANEL_TITLE,
                         type: 'component',
                         componentName: 'SpinalHome',
                         width: 20,
@@ -171,7 +172,7 @@ angular
         const newDigitalTwin = (directory, filename) => {
             const graph = new spinal_env_viewer_graph_service_1.SpinalGraph();
             directory.force_add_file(filename, graph, {
-                model_type: 'Digital Twin',
+                model_type: contant_1.DIGITAL_TWIN_FILE_MODEL_TYPE,
             });
         };
         const getFilesDropped = () => {
