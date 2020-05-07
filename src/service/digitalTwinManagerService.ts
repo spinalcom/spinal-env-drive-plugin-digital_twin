@@ -45,7 +45,7 @@ angular
   .factory('digitalTwinManagerService', [
     'goldenLayoutService', '$q', '$templateCache', '$http', 'spinalFileSystem',
     function (goldenLayoutService, $q, $templateCache, $http, spinalFileSystem) {
-      let lastGraph: SpinalGraph = null;
+      let lastGraph: SpinalGraph<any> = null;
       const bimFileService = new BimFileService(onChangeModel);
       const loadTemplateFunc = (uri: string, name: string) => {
         return $http.get(uri).then(
@@ -110,11 +110,14 @@ angular
             goldenLayoutService.myLayout.on('itemDestroyed', onItemDestroy);
           } else if (oldFile !== factory.lastFile) {
             return loadModelPtr(factory.lastFile._ptr)
-              .then((graph) => {
+              .then((graph: SpinalGraph<any>) => {
                 lastGraph = graph;
                 bimFileService.resetProcess();
-                return SpinalGraphService.setGraph(lastGraph);
-              });
+                SpinalGraphService.nodes = {};
+                SpinalGraphService.nodesInfo = {};
+                return SpinalGraphService.setGraph(graph);
+              }).then(() => bimFileService.addToProces(lastGraph, false)
+              );
           }
         });
       };
@@ -157,7 +160,7 @@ angular
         factory.controllerOnChange = funcOnChange;
         factory.controllerDestroyFunc = funcOnDestroy;
         return loadModelPtr(factory.lastFile._ptr)
-          .then((graph) => {
+          .then((graph: SpinalGraph<any>) => {
             lastGraph = graph;
             return SpinalGraphService.setGraph(lastGraph).then((e) => {
               bimFileService.addToProces(graph, false);

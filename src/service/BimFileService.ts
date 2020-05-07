@@ -71,9 +71,9 @@ export default class BimFileService {
     });
 
   }
-
-  addToProces(node: string | spinal.Str | SpinalNode | SpinalNodeRef, check = true): void {
+  addToProces(node: string | spinal.Str | SpinalNode<any> | SpinalNodeRef, check = true): void {
     if (check === false) {
+      // @ts-ignore
       return this.processOnChange.add(node);
     }
     let resNode = node;
@@ -86,15 +86,16 @@ export default class BimFileService {
       return this.processOnChange.add(realNode);
     }
     if (resNode instanceof Model) {
-      if (typeof node.id !== 'undefined') {
-        return this.processOnChange.add(SpinalGraphService.getRealNode(node.id.get()));
+      if (typeof resNode.id !== 'undefined') {
+        return this.processOnChange.add(SpinalGraphService.getRealNode(resNode.id.get()));
       }
     }
+    // @ts-ignore
     this.processOnChange.add(resNode);
   }
 
   async getContextID(): Promise<string> {
-    let context: SpinalNode = SpinalGraphService.getContext(BIM_FILE_CONTEXT_NAME);
+    let context: SpinalNode<any> = SpinalGraphService.getContext(BIM_FILE_CONTEXT_NAME);
     if (!context) {
       context = await SpinalGraphService.addContext(BIM_FILE_CONTEXT_NAME);
     }
@@ -108,6 +109,7 @@ export default class BimFileService {
       this.addToProces(child);
       const versionModel = await loadModelPtr(child.element.ptr);
       const currentVersion: FileVersionModel = await loadModelPtr(versionModel.currentVersion);
+      // @ts-ignore
       this.addToProces(currentVersion);
       return {
         nodeId: child.id.get(),

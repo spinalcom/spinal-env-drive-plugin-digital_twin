@@ -21,7 +21,7 @@ export default class BimFileService {
     constructor(fct?: () => void);
     resetProcess(): void;
     setOnChange(fct: () => void): void;
-    addToProces(node: string | spinal.Str | SpinalNode | SpinalNodeRef, check?: boolean): void;
+    addToProces(node: string | spinal.Str | SpinalNode<any> | SpinalNodeRef, check?: boolean): void;
     getContextID(): Promise<string>;
     getAssetFiles(): Promise<AssetFile[]>;
     removeAssetFile(nodeID: string): Promise<void>;

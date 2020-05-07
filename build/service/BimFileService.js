@@ -23,10 +23,11 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -59,6 +60,7 @@ class BimFileService {
     }
     addToProces(node, check = true) {
         if (check === false) {
+            // @ts-ignore
             return this.processOnChange.add(node);
         }
         let resNode = node;
@@ -71,10 +73,11 @@ class BimFileService {
             return this.processOnChange.add(realNode);
         }
         if (resNode instanceof spinal_core_connectorjs_type_1.Model) {
-            if (typeof node.id !== 'undefined') {
-                return this.processOnChange.add(spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(node.id.get()));
+            if (typeof resNode.id !== 'undefined') {
+                return this.processOnChange.add(spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(resNode.id.get()));
             }
         }
+        // @ts-ignore
         this.processOnChange.add(resNode);
     }
     getContextID() {
@@ -84,6 +87,7 @@ class BimFileService {
                 context = yield spinal_env_viewer_graph_service_1.SpinalGraphService.addContext(BIM_FILE_CONTEXT_NAME);
             }
             this.addToProces(context, false);
+            console.log("contextID", context.getId().get());
             return context.getId().get();
         });
     }
@@ -95,6 +99,7 @@ class BimFileService {
                 this.addToProces(child);
                 const versionModel = yield loadModelPtr_1.default(child.element.ptr);
                 const currentVersion = yield loadModelPtr_1.default(versionModel.currentVersion);
+                // @ts-ignore
                 this.addToProces(currentVersion);
                 return {
                     nodeId: child.id.get(),

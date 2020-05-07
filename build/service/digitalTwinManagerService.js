@@ -23,10 +23,11 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -84,6 +85,8 @@ angular
             return factory.init().then(() => {
                 const oldFile = factory.lastFile;
                 factory.lastFile = file;
+                console.log("oldFile", oldFile);
+                console.log("factory.lastFile", factory.lastFile);
                 if (factory.controllerOnChange === null) {
                     const cfg = {
                         isClosable: true,
@@ -113,8 +116,10 @@ angular
                         .then((graph) => {
                         lastGraph = graph;
                         bimFileService.resetProcess();
-                        return spinal_env_viewer_graph_service_1.SpinalGraphService.setGraph(lastGraph);
-                    });
+                        spinal_env_viewer_graph_service_1.SpinalGraphService.nodes = {};
+                        spinal_env_viewer_graph_service_1.SpinalGraphService.nodesInfo = {};
+                        return spinal_env_viewer_graph_service_1.SpinalGraphService.setGraph(graph);
+                    }).then(() => bimFileService.addToProces(lastGraph, false));
                 }
             });
         };
