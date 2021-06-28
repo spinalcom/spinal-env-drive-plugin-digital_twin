@@ -32,6 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BIM_FILE_TYPE = exports.BIM_FILE_RELATION = exports.BIM_FILE_CONTEXT_NAME = exports.BimFileService = void 0;
 const BIM_FILE_CONTEXT_NAME = 'BimFileContext';
 exports.BIM_FILE_CONTEXT_NAME = BIM_FILE_CONTEXT_NAME;
 const BIM_FILE_RELATION = 'hasBimFile';
@@ -87,7 +88,6 @@ class BimFileService {
                 context = yield spinal_env_viewer_graph_service_1.SpinalGraphService.addContext(BIM_FILE_CONTEXT_NAME);
             }
             this.addToProces(context, false);
-            console.log("contextID", context.getId().get());
             return context.getId().get();
         });
     }

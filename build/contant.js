@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DIGITAL_TWIN_CREATE_MANAGER_BUTTON_DESCRIPTION = exports.DIGITAL_TWIN_CREATE_MANAGER_BUTTON = exports.DIGITAL_TWIN_OPEN_MANAGER_BUTTON_DESCRIPTION = exports.DIGITAL_TWIN_OPEN_MANAGER_BUTTON = exports.DIGITAL_TWIN_PANEL_TITLE = exports.DIGITAL_TWIN_FILE_MODEL_TYPE = void 0;
 exports.DIGITAL_TWIN_FILE_MODEL_TYPE = 'Digital twin';
 exports.DIGITAL_TWIN_PANEL_TITLE = 'Digital Twin Manager';
 exports.DIGITAL_TWIN_OPEN_MANAGER_BUTTON = 'Digital Twin Manager';

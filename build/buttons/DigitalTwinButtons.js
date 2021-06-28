@@ -44,7 +44,7 @@ angular
                     .initialValue('Digital twin')
                     .clickOutsideToClose(true)
                     .required(true)
-                    .ok('Create !')
+                    .ok('Create')
                     .cancel('Cancel');
                 obj.original = {
                     model: obj.model._server_id,
@@ -64,6 +64,29 @@ angular
             }
         }
         anyWin.spinalDrive_Env.add_applications('FileExplorerCurrDir', new SpinalDriveAppCurrFileExplorerCreateDigitalTwinManager());
+        // create digital twin in FE top menu
+        class SpinalDriveAppCurrFileExplorerCreateSpinalTwinGraph extends spinalEnvDriveCore.SpinalDrive_App {
+            constructor() {
+                super('SpinalTwinManager', "Create SpinalTwin Admin", 37, 'assignment_ind', "Create SpinalTwin Admin");
+                this.order_priority = 0;
+            }
+            action(obj) {
+                obj.original = {
+                    model: obj.model._server_id,
+                };
+                if (obj && obj.model && obj.model._server_id) {
+                    const directory = spinal_core_connectorjs_type_1.FileSystem._objects[obj.model._server_id];
+                    digitalTwinManagerService.newSpinalRoleManager(directory, "SpinalTwin Admin");
+                }
+                else {
+                    console.log('Error Directory model not foud');
+                }
+            }
+            is_shown(file) {
+                return true;
+            }
+        }
+        anyWin.spinalDrive_Env.add_applications('FileExplorerCurrDir', new SpinalDriveAppCurrFileExplorerCreateSpinalTwinGraph());
     },
 ]);
 //# sourceMappingURL=DigitalTwinButtons.js.map

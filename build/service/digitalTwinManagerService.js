@@ -85,8 +85,6 @@ angular
             return factory.init().then(() => {
                 const oldFile = factory.lastFile;
                 factory.lastFile = file;
-                console.log("oldFile", oldFile);
-                console.log("factory.lastFile", factory.lastFile);
                 if (factory.controllerOnChange === null) {
                     const cfg = {
                         isClosable: true,
@@ -180,6 +178,26 @@ angular
                 model_type: contant_1.DIGITAL_TWIN_FILE_MODEL_TYPE,
             });
         };
+        const newSpinalRoleManager = (directory, filename) => {
+            const graph = new spinal_env_viewer_graph_service_1.SpinalGraph("SpinalTwinAdmin");
+            const DataListContext = new spinal_env_viewer_graph_service_1.SpinalContext("DataList");
+            const SpinaltwinDescContext = new spinal_env_viewer_graph_service_1.SpinalContext("SpinalTwinDescription");
+            const UserProfileContext = new spinal_env_viewer_graph_service_1.SpinalContext("UserProfile");
+            const UserListContext = new spinal_env_viewer_graph_service_1.SpinalContext("UserList");
+            graph.addContext(DataListContext);
+            graph.addContext(SpinaltwinDescContext);
+            graph.addContext(UserProfileContext);
+            graph.addContext(UserListContext);
+            const dataRoomNode = new spinal_env_viewer_graph_service_1.SpinalNode("DataRoom");
+            const maintenanceBookNode = new spinal_env_viewer_graph_service_1.SpinalNode("MaintenanceBook");
+            const operationCenterNode = new spinal_env_viewer_graph_service_1.SpinalNode("OperationBook");
+            SpinaltwinDescContext.addChildInContext(dataRoomNode, "hasApplication", "PtrList");
+            SpinaltwinDescContext.addChildInContext(maintenanceBookNode, "hasApplication", "PtrList");
+            SpinaltwinDescContext.addChildInContext(operationCenterNode, "hasApplication", "PtrList");
+            directory.force_add_file(filename, graph, {
+                model_type: "SpinalTwin Admin",
+            });
+        };
         const getFilesDropped = () => {
             const fileMatch = [];
             const fileNotMatch = [];
@@ -232,6 +250,7 @@ angular
             getFilesDropped,
             init,
             newDigitalTwin,
+            newSpinalRoleManager,
             openPanel,
             controllerOpenRegister,
             controllerDestroy,

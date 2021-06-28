@@ -30,6 +30,8 @@ import loadModelPtr from '../utils/loadModelPtr';
 import {
   SpinalGraphService,
   SpinalGraph,
+  SpinalContext,
+  SpinalNode,
 } from 'spinal-env-viewer-graph-service';
 import matchKnownExt from '../utils/knownExt';
 import { BimFileService, AssetFile } from './BimFileService';
@@ -179,6 +181,31 @@ angular
           model_type: DIGITAL_TWIN_FILE_MODEL_TYPE,
         });
       };
+
+      const newSpinalRoleManager = (directory: spinal.Directory<any>, filename: string) => {
+        const graph = new SpinalGraph("SpinalTwinAdmin");
+        const DataListContext = new SpinalContext("DataList");
+
+        const SpinaltwinDescContext = new SpinalContext("SpinalTwinDescription");
+        const UserProfileContext = new SpinalContext("UserProfile");
+        const UserListContext = new SpinalContext("UserList");
+        graph.addContext(DataListContext);
+        graph.addContext(SpinaltwinDescContext);
+        graph.addContext(UserProfileContext);
+        graph.addContext(UserListContext);
+
+        const dataRoomNode = new SpinalNode("DataRoom");
+        const maintenanceBookNode = new SpinalNode("MaintenanceBook");
+        const operationCenterNode = new SpinalNode("OperationBook");
+
+        SpinaltwinDescContext.addChildInContext(dataRoomNode, "hasApplication", "PtrList");
+        SpinaltwinDescContext.addChildInContext(maintenanceBookNode, "hasApplication", "PtrList");
+        SpinaltwinDescContext.addChildInContext(operationCenterNode, "hasApplication", "PtrList");
+        directory.force_add_file(filename, graph, {
+          model_type: "SpinalTwin Admin",
+        });
+      };
+
       const getFilesDropped = (): {
         fileMatch: spinal.File<any>[],
         fileNotMatch: spinal.File<any>[],
@@ -236,6 +263,7 @@ angular
         getFilesDropped,
         init,
         newDigitalTwin,
+        newSpinalRoleManager,
         openPanel,
         controllerOpenRegister,
         controllerDestroy,

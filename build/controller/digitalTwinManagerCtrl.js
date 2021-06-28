@@ -94,7 +94,6 @@ const controller = {
             }, 100);
             $scope.$watch('$viewContentLoaded', function () {
                 digitalTwinManagerService.controllerOpenRegister((data) => {
-                    console.log("controllerOpenRegister", data);
                     $scope.filename = data.filename;
                     mergeArray_1.default(assets, data.assetFiles, (origin, to) => {
                         return (origin.nodeId === to.nodeId);

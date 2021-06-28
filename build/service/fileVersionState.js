@@ -23,6 +23,7 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.fileVersionState = void 0;
 const fileVersionState = [
     'Inital',
     'Send tranlation command to organ',

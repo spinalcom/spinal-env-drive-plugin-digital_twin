@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.knownExt = void 0;
 exports.knownExt = [
     '3DM',
     '3DS',
