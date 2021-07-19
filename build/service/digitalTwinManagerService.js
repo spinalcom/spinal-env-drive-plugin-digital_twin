@@ -184,16 +184,41 @@ angular
             const SpinaltwinDescContext = new spinal_env_viewer_graph_service_1.SpinalContext("SpinalTwinDescription");
             const UserProfileContext = new spinal_env_viewer_graph_service_1.SpinalContext("UserProfile");
             const UserListContext = new spinal_env_viewer_graph_service_1.SpinalContext("UserList");
+            const RoleListContext = new spinal_env_viewer_graph_service_1.SpinalContext("RoleList");
             graph.addContext(DataListContext);
             graph.addContext(SpinaltwinDescContext);
             graph.addContext(UserProfileContext);
             graph.addContext(UserListContext);
+            graph.addContext(RoleListContext);
             const dataRoomNode = new spinal_env_viewer_graph_service_1.SpinalNode("DataRoom");
             const maintenanceBookNode = new spinal_env_viewer_graph_service_1.SpinalNode("MaintenanceBook");
             const operationCenterNode = new spinal_env_viewer_graph_service_1.SpinalNode("OperationBook");
-            SpinaltwinDescContext.addChildInContext(dataRoomNode, "hasApplication", "PtrList");
-            SpinaltwinDescContext.addChildInContext(maintenanceBookNode, "hasApplication", "PtrList");
-            SpinaltwinDescContext.addChildInContext(operationCenterNode, "hasApplication", "PtrList");
+            SpinaltwinDescContext.addChildInContext(dataRoomNode, "hasGroupApplication", "PtrLst");
+            SpinaltwinDescContext.addChildInContext(maintenanceBookNode, "hasGroupApplication", "PtrLst");
+            SpinaltwinDescContext.addChildInContext(operationCenterNode, "hasGroupApplication", "PtrLst");
+            // App for DataRoom
+            const EquipmentCenter = new spinal_env_viewer_graph_service_1.SpinalNode("EquipmentCenter");
+            const DescriptionCenter = new spinal_env_viewer_graph_service_1.SpinalNode("DescriptionCenter");
+            const SpaceCenter = new spinal_env_viewer_graph_service_1.SpinalNode("SpaceCenter");
+            dataRoomNode.addChildInContext(EquipmentCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
+            dataRoomNode.addChildInContext(DescriptionCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
+            dataRoomNode.addChildInContext(SpaceCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
+            // App for MaintenanceBook
+            const TicketCenter = new spinal_env_viewer_graph_service_1.SpinalNode("TicketCenter");
+            const NoteCenter = new spinal_env_viewer_graph_service_1.SpinalNode("NoteCenter");
+            const AgendaCenter = new spinal_env_viewer_graph_service_1.SpinalNode("AgendaCenter");
+            maintenanceBookNode.addChild(TicketCenter, "hasApplicationMaintenanceBook", "PtrLst");
+            maintenanceBookNode.addChild(NoteCenter, "hasApplicationMaintenanceBook", "PtrLst");
+            maintenanceBookNode.addChild(AgendaCenter, "hasApplicationMaintenanceBook", "PtrLst");
+            // App for OperationCenter
+            const InsightCenter = new spinal_env_viewer_graph_service_1.SpinalNode("InsightCenter");
+            const ControlCenter = new spinal_env_viewer_graph_service_1.SpinalNode("ControlCenter");
+            const AlarmCenter = new spinal_env_viewer_graph_service_1.SpinalNode("AlarmCenter");
+            const EnergyCenter = new spinal_env_viewer_graph_service_1.SpinalNode("EnergyCenter");
+            operationCenterNode.addChild(InsightCenter, "hasApplicationOperation", "PtrLst");
+            operationCenterNode.addChild(ControlCenter, "hasApplicationOperation", "PtrLst");
+            operationCenterNode.addChild(AlarmCenter, "hasApplicationOperation", "PtrLst");
+            operationCenterNode.addChild(EnergyCenter, "hasApplicationOperation", "PtrLst");
             directory.force_add_file(filename, graph, {
                 model_type: "SpinalTwin Admin",
             });

@@ -189,20 +189,52 @@ angular
         const SpinaltwinDescContext = new SpinalContext("SpinalTwinDescription");
         const UserProfileContext = new SpinalContext("UserProfile");
         const UserListContext = new SpinalContext("UserList");
+        const RoleListContext = new SpinalContext("RoleList");
         graph.addContext(DataListContext);
         graph.addContext(SpinaltwinDescContext);
         graph.addContext(UserProfileContext);
         graph.addContext(UserListContext);
+        graph.addContext(RoleListContext);
 
         const dataRoomNode = new SpinalNode("DataRoom");
         const maintenanceBookNode = new SpinalNode("MaintenanceBook");
         const operationCenterNode = new SpinalNode("OperationBook");
 
-        SpinaltwinDescContext.addChildInContext(dataRoomNode, "hasApplication", "PtrList");
-        SpinaltwinDescContext.addChildInContext(maintenanceBookNode, "hasApplication", "PtrList");
-        SpinaltwinDescContext.addChildInContext(operationCenterNode, "hasApplication", "PtrList");
+        SpinaltwinDescContext.addChildInContext(dataRoomNode, "hasGroupApplication", "PtrLst");
+        SpinaltwinDescContext.addChildInContext(maintenanceBookNode, "hasGroupApplication", "PtrLst");
+        SpinaltwinDescContext.addChildInContext(operationCenterNode, "hasGroupApplication", "PtrLst");
+
+        // App for DataRoom
+        const EquipmentCenter = new SpinalNode("EquipmentCenter");
+        const DescriptionCenter = new SpinalNode("DescriptionCenter");
+        const SpaceCenter = new SpinalNode("SpaceCenter");
+
+        dataRoomNode.addChildInContext(EquipmentCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
+        dataRoomNode.addChildInContext(DescriptionCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
+        dataRoomNode.addChildInContext(SpaceCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
+
+        // App for MaintenanceBook
+        const TicketCenter = new SpinalNode("TicketCenter");
+        const NoteCenter = new SpinalNode("NoteCenter");
+        const AgendaCenter = new SpinalNode("AgendaCenter");
+
+        maintenanceBookNode.addChildInContext(TicketCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
+        maintenanceBookNode.addChildInContext(NoteCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
+        maintenanceBookNode.addChildInContext(AgendaCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
+
+        // App for OperationCenter
+        const InsightCenter = new SpinalNode("InsightCenter");
+        const ControlCenter = new SpinalNode("ControlCenter");
+        const AlarmCenter = new SpinalNode("AlarmCenter");
+        const EnergyCenter = new SpinalNode("EnergyCenter");
+
+        operationCenterNode.addChildInContext(InsightCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
+        operationCenterNode.addChildInContext(ControlCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
+        operationCenterNode.addChildInContext(AlarmCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
+        operationCenterNode.addChildInContext(EnergyCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
+
         directory.force_add_file(filename, graph, {
-          model_type: "SpinalTwin Admin",
+            model_type: "SpinalTwin Admin",
         });
       };
 
