@@ -207,18 +207,18 @@ angular
             const TicketCenter = new spinal_env_viewer_graph_service_1.SpinalNode("TicketCenter");
             const NoteCenter = new spinal_env_viewer_graph_service_1.SpinalNode("NoteCenter");
             const AgendaCenter = new spinal_env_viewer_graph_service_1.SpinalNode("AgendaCenter");
-            maintenanceBookNode.addChild(TicketCenter, "hasApplicationMaintenanceBook", "PtrLst");
-            maintenanceBookNode.addChild(NoteCenter, "hasApplicationMaintenanceBook", "PtrLst");
-            maintenanceBookNode.addChild(AgendaCenter, "hasApplicationMaintenanceBook", "PtrLst");
+            maintenanceBookNode.addChildInContext(TicketCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
+            maintenanceBookNode.addChildInContext(NoteCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
+            maintenanceBookNode.addChildInContext(AgendaCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
             // App for OperationCenter
             const InsightCenter = new spinal_env_viewer_graph_service_1.SpinalNode("InsightCenter");
             const ControlCenter = new spinal_env_viewer_graph_service_1.SpinalNode("ControlCenter");
             const AlarmCenter = new spinal_env_viewer_graph_service_1.SpinalNode("AlarmCenter");
             const EnergyCenter = new spinal_env_viewer_graph_service_1.SpinalNode("EnergyCenter");
-            operationCenterNode.addChild(InsightCenter, "hasApplicationOperation", "PtrLst");
-            operationCenterNode.addChild(ControlCenter, "hasApplicationOperation", "PtrLst");
-            operationCenterNode.addChild(AlarmCenter, "hasApplicationOperation", "PtrLst");
-            operationCenterNode.addChild(EnergyCenter, "hasApplicationOperation", "PtrLst");
+            operationCenterNode.addChildInContext(InsightCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
+            operationCenterNode.addChildInContext(ControlCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
+            operationCenterNode.addChildInContext(AlarmCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
+            operationCenterNode.addChildInContext(EnergyCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
             directory.force_add_file(filename, graph, {
                 model_type: "SpinalTwin Admin",
             });
