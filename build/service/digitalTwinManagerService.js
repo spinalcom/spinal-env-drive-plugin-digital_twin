@@ -44,15 +44,17 @@ const contant_1 = require("../contant");
 angular
     .module('app.services')
     .controller(digitalTwinManagerCtrl_1.default.ctrlName, digitalTwinManagerCtrl_1.default.ctrl);
-angular
-    .module('app.services')
-    .factory('digitalTwinManagerService', [
-    'goldenLayoutService', '$q', '$templateCache', '$http', 'spinalFileSystem',
+angular.module('app.services').factory('digitalTwinManagerService', [
+    'goldenLayoutService',
+    '$q',
+    '$templateCache',
+    '$http',
+    'spinalFileSystem',
     function (goldenLayoutService, $q, $templateCache, $http, spinalFileSystem) {
         let lastGraph = null;
         const bimFileService = new BimFileService_1.BimFileService(onChangeModel);
         const loadTemplateFunc = (uri, name) => {
-            return $http.get(uri).then(response => {
+            return $http.get(uri).then((response) => {
                 $templateCache.put(name, response.data);
             }, () => {
                 console.error(`Cannot load the file ${uri}`);
@@ -71,9 +73,11 @@ angular
             initPromise = $q.defer();
             $q.all(toload.map((elem) => {
                 return loadTemplateFunc(elem.uri, elem.name);
-            })).then(() => {
+            }))
+                .then(() => {
                 initPromise.resolve();
-            }).catch((e) => {
+            })
+                .catch((e) => {
                 console.error(e);
                 const prom = initPromise;
                 initPromise = null;
@@ -100,7 +104,9 @@ angular
                     };
                     goldenLayoutService.createChild(cfg);
                     function onItemDestroy(item) {
-                        if (item && item.config && item.config.componentState &&
+                        if (item &&
+                            item.config &&
+                            item.config.componentState &&
                             item.config.componentState.controller &&
                             item.config.componentState.controller === digitalTwinManagerCtrl_1.default.ctrlName) {
                             controllerDestroy();
@@ -117,7 +123,8 @@ angular
                         spinal_env_viewer_graph_service_1.SpinalGraphService.nodes = {};
                         spinal_env_viewer_graph_service_1.SpinalGraphService.nodesInfo = {};
                         return spinal_env_viewer_graph_service_1.SpinalGraphService.setGraph(graph);
-                    }).then(() => bimFileService.addToProces(lastGraph, false));
+                    })
+                        .then(() => bimFileService.addToProces(lastGraph, false));
                 }
             });
         };
@@ -158,8 +165,7 @@ angular
         const controllerOpenRegister = (funcOnChange, funcOnDestroy) => {
             factory.controllerOnChange = funcOnChange;
             factory.controllerDestroyFunc = funcOnDestroy;
-            return loadModelPtr_1.default(factory.lastFile._ptr)
-                .then((graph) => {
+            return loadModelPtr_1.default(factory.lastFile._ptr).then((graph) => {
                 lastGraph = graph;
                 return spinal_env_viewer_graph_service_1.SpinalGraphService.setGraph(lastGraph).then((e) => {
                     bimFileService.addToProces(graph, false);
@@ -179,62 +185,71 @@ angular
             });
         };
         const newSpinalRoleManager = (directory, filename) => {
-            const graph = new spinal_env_viewer_graph_service_1.SpinalGraph("SpinalTwinAdmin");
-            const DataListContext = new spinal_env_viewer_graph_service_1.SpinalContext("DataList");
-            const SpinaltwinDescContext = new spinal_env_viewer_graph_service_1.SpinalContext("SpinalTwinDescription");
-            const UserProfileContext = new spinal_env_viewer_graph_service_1.SpinalContext("UserProfile");
-            const UserListContext = new spinal_env_viewer_graph_service_1.SpinalContext("UserList");
-            const RoleListContext = new spinal_env_viewer_graph_service_1.SpinalContext("RoleList");
+            const graph = new spinal_env_viewer_graph_service_1.SpinalGraph('SpinalTwinAdmin');
+            const DataListContext = new spinal_env_viewer_graph_service_1.SpinalContext('DataList');
+            const SpinaltwinDescContext = new spinal_env_viewer_graph_service_1.SpinalContext('SpinalTwinDescription');
+            const UserProfileContext = new spinal_env_viewer_graph_service_1.SpinalContext('UserProfile');
+            const UserListContext = new spinal_env_viewer_graph_service_1.SpinalContext('UserList');
+            const RoleListContext = new spinal_env_viewer_graph_service_1.SpinalContext('RoleList');
             graph.addContext(DataListContext);
             graph.addContext(SpinaltwinDescContext);
             graph.addContext(UserProfileContext);
             graph.addContext(UserListContext);
             graph.addContext(RoleListContext);
-            const dataRoomNode = new spinal_env_viewer_graph_service_1.SpinalNode("DataRoom");
-            const maintenanceBookNode = new spinal_env_viewer_graph_service_1.SpinalNode("MaintenanceBook");
-            const operationCenterNode = new spinal_env_viewer_graph_service_1.SpinalNode("OperationBook");
-            SpinaltwinDescContext.addChildInContext(dataRoomNode, "hasGroupApplication", "PtrLst");
-            SpinaltwinDescContext.addChildInContext(maintenanceBookNode, "hasGroupApplication", "PtrLst");
-            SpinaltwinDescContext.addChildInContext(operationCenterNode, "hasGroupApplication", "PtrLst");
+            const read = new spinal_env_viewer_graph_service_1.SpinalNode('Lecture');
+            const write = new spinal_env_viewer_graph_service_1.SpinalNode('Ecriture');
+            const deleted = new spinal_env_viewer_graph_service_1.SpinalNode('Suppression');
+            RoleListContext.addChildInContext(read, contant_1.SPINALTWIN_ADMIN_SERVICE_ROLE_RELATION_NAME, contant_1.SPINALTWIN_ADMIN_SERVICE_APP_RELATION_TYPE_PTR_LST);
+            RoleListContext.addChildInContext(write, contant_1.SPINALTWIN_ADMIN_SERVICE_ROLE_RELATION_NAME, contant_1.SPINALTWIN_ADMIN_SERVICE_APP_RELATION_TYPE_PTR_LST);
+            RoleListContext.addChildInContext(deleted, contant_1.SPINALTWIN_ADMIN_SERVICE_ROLE_RELATION_NAME, contant_1.SPINALTWIN_ADMIN_SERVICE_APP_RELATION_TYPE_PTR_LST);
+            const dataRoomNode = new spinal_env_viewer_graph_service_1.SpinalNode('DataRoom');
+            const maintenanceBookNode = new spinal_env_viewer_graph_service_1.SpinalNode('MaintenanceBook');
+            const operationCenterNode = new spinal_env_viewer_graph_service_1.SpinalNode('OperationBook');
+            SpinaltwinDescContext.addChildInContext(dataRoomNode, 'hasGroupApplication', 'PtrLst');
+            SpinaltwinDescContext.addChildInContext(maintenanceBookNode, 'hasGroupApplication', 'PtrLst');
+            SpinaltwinDescContext.addChildInContext(operationCenterNode, 'hasGroupApplication', 'PtrLst');
             // App for DataRoom
-            const EquipmentCenter = new spinal_env_viewer_graph_service_1.SpinalNode("EquipmentCenter");
-            const DescriptionCenter = new spinal_env_viewer_graph_service_1.SpinalNode("DescriptionCenter");
-            const SpaceCenter = new spinal_env_viewer_graph_service_1.SpinalNode("SpaceCenter");
-            dataRoomNode.addChildInContext(EquipmentCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
-            dataRoomNode.addChildInContext(DescriptionCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
-            dataRoomNode.addChildInContext(SpaceCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
+            const EquipmentCenter = new spinal_env_viewer_graph_service_1.SpinalNode('EquipmentCenter');
+            const DescriptionCenter = new spinal_env_viewer_graph_service_1.SpinalNode('DescriptionCenter');
+            const SpaceCenter = new spinal_env_viewer_graph_service_1.SpinalNode('SpaceCenter');
+            dataRoomNode.addChildInContext(EquipmentCenter, 'hasApplicationDataRoom', 'PtrLst', SpinaltwinDescContext);
+            dataRoomNode.addChildInContext(DescriptionCenter, 'hasApplicationDataRoom', 'PtrLst', SpinaltwinDescContext);
+            dataRoomNode.addChildInContext(SpaceCenter, 'hasApplicationDataRoom', 'PtrLst', SpinaltwinDescContext);
             // App for MaintenanceBook
-            const TicketCenter = new spinal_env_viewer_graph_service_1.SpinalNode("TicketCenter");
-            const NoteCenter = new spinal_env_viewer_graph_service_1.SpinalNode("NoteCenter");
-            const AgendaCenter = new spinal_env_viewer_graph_service_1.SpinalNode("AgendaCenter");
-            maintenanceBookNode.addChildInContext(TicketCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
-            maintenanceBookNode.addChildInContext(NoteCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
-            maintenanceBookNode.addChildInContext(AgendaCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
+            const TicketCenter = new spinal_env_viewer_graph_service_1.SpinalNode('TicketCenter');
+            const NoteCenter = new spinal_env_viewer_graph_service_1.SpinalNode('NoteCenter');
+            const AgendaCenter = new spinal_env_viewer_graph_service_1.SpinalNode('AgendaCenter');
+            maintenanceBookNode.addChildInContext(TicketCenter, 'hasApplicationMaintenanceBook', 'PtrLst', SpinaltwinDescContext);
+            maintenanceBookNode.addChildInContext(NoteCenter, 'hasApplicationMaintenanceBook', 'PtrLst', SpinaltwinDescContext);
+            maintenanceBookNode.addChildInContext(AgendaCenter, 'hasApplicationMaintenanceBook', 'PtrLst', SpinaltwinDescContext);
             // App for OperationCenter
-            const InsightCenter = new spinal_env_viewer_graph_service_1.SpinalNode("InsightCenter");
-            const ControlCenter = new spinal_env_viewer_graph_service_1.SpinalNode("ControlCenter");
-            const AlarmCenter = new spinal_env_viewer_graph_service_1.SpinalNode("AlarmCenter");
-            const EnergyCenter = new spinal_env_viewer_graph_service_1.SpinalNode("EnergyCenter");
-            operationCenterNode.addChildInContext(InsightCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
-            operationCenterNode.addChildInContext(ControlCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
-            operationCenterNode.addChildInContext(AlarmCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
-            operationCenterNode.addChildInContext(EnergyCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
+            const InsightCenter = new spinal_env_viewer_graph_service_1.SpinalNode('InsightCenter');
+            const ControlCenter = new spinal_env_viewer_graph_service_1.SpinalNode('ControlCenter');
+            const AlarmCenter = new spinal_env_viewer_graph_service_1.SpinalNode('AlarmCenter');
+            const EnergyCenter = new spinal_env_viewer_graph_service_1.SpinalNode('EnergyCenter');
+            operationCenterNode.addChildInContext(InsightCenter, 'hasApplicationOperation', 'PtrLst', SpinaltwinDescContext);
+            operationCenterNode.addChildInContext(ControlCenter, 'hasApplicationOperation', 'PtrLst', SpinaltwinDescContext);
+            operationCenterNode.addChildInContext(AlarmCenter, 'hasApplicationOperation', 'PtrLst', SpinaltwinDescContext);
+            operationCenterNode.addChildInContext(EnergyCenter, 'hasApplicationOperation', 'PtrLst', SpinaltwinDescContext);
             directory.force_add_file(filename, graph, {
-                model_type: "SpinalTwin Admin",
+                model_type: 'SpinalTwin Admin',
             });
         };
         const getFilesDropped = () => {
             const fileMatch = [];
             const fileNotMatch = [];
             const selected = spinalFileSystem.FE_selected_drag;
-            if (selected && selected.length > 0) { // change to multiple selection later
+            if (selected && selected.length > 0) {
+                // change to multiple selection later
                 for (let idx = 0; idx < selected.length; idx++) {
                     const fileToPush = selected[idx];
                     let match = false;
                     const modelFile = spinal_core_connectorjs_type_1.FileSystem._objects[fileToPush._server_id];
                     // check if file then if file == 'Path' or 'HttpPath'
-                    if (modelFile && modelFile instanceof spinal_core_connectorjs_type_1.File &&
-                        modelFile._info && modelFile._info.model_type) {
+                    if (modelFile &&
+                        modelFile instanceof spinal_core_connectorjs_type_1.File &&
+                        modelFile._info &&
+                        modelFile._info.model_type) {
                         const modelType = modelFile._info.model_type.get();
                         if (modelType === 'Path' || modelType === 'HttpPath') {
                             const filename = modelFile.name.get();

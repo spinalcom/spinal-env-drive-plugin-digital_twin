@@ -5,9 +5,7 @@ const contant_1 = require("../contant");
 const spinalEnvDriveCore = require('spinal-env-drive-core');
 require('spinal-core-connectorjs');
 const angular = require('angular');
-angular
-    .module('app.controllers')
-    .run([
+angular.module('app.controllers').run([
     'digitalTwinManagerService',
     function (digitalTwinManagerService) {
         const anyWin = window;
@@ -39,7 +37,7 @@ angular
                 const confirm = mdDialog
                     .prompt()
                     .title('New Digital twin')
-                    .placeholder('Digital twin\'s name')
+                    .placeholder("Digital twin's name")
                     .ariaLabel('New Digital twin')
                     .initialValue('Digital twin')
                     .clickOutsideToClose(true)
@@ -49,7 +47,7 @@ angular
                 obj.original = {
                     model: obj.model._server_id,
                 };
-                mdDialog.show(confirm).then(filename => {
+                mdDialog.show(confirm).then((filename) => {
                     if (filename && obj && obj.model && obj.model._server_id) {
                         const directory = spinal_core_connectorjs_type_1.FileSystem._objects[obj.model._server_id];
                         digitalTwinManagerService.newDigitalTwin(directory, filename);
@@ -67,7 +65,7 @@ angular
         // create digital twin in FE top menu
         class SpinalDriveAppCurrFileExplorerCreateSpinalTwinGraph extends spinalEnvDriveCore.SpinalDrive_App {
             constructor() {
-                super('SpinalTwinManager', "Create SpinalTwin Admin", 37, 'assignment_ind', "Create SpinalTwin Admin");
+                super('SpinalTwinManager', 'Create SpinalTwin Admin', 37, 'assignment_ind', 'Create SpinalTwin Admin');
                 this.order_priority = 0;
             }
             action(obj) {
@@ -76,7 +74,7 @@ angular
                 };
                 if (obj && obj.model && obj.model._server_id) {
                     const directory = spinal_core_connectorjs_type_1.FileSystem._objects[obj.model._server_id];
-                    digitalTwinManagerService.newSpinalRoleManager(directory, "SpinalTwin Admin");
+                    digitalTwinManagerService.newSpinalRoleManager(directory, 'SpinalTwin Admin');
                 }
                 else {
                     console.log('Error Directory model not foud');
@@ -87,6 +85,52 @@ angular
             }
         }
         anyWin.spinalDrive_Env.add_applications('FileExplorerCurrDir', new SpinalDriveAppCurrFileExplorerCreateSpinalTwinGraph());
+        class SpinalDriveAppFileExplorerBrowserSTAdmin extends spinalEnvDriveCore.SpinalDrive_App {
+            /**
+             * Creates an instance of SpinalDriveAppFileExplorerBrowserSTAdmin.
+             * @memberof SpinalDriveAppFileExplorerBrowserSTAdmin
+             */
+            constructor() {
+                super('OpenSTAdminFileExplorer', 'ST Admin', '10', 'location_city', 'ST Admin');
+                this.order_priority = 5;
+            }
+            /**
+             * method to handle the selection
+             *
+             * @param {any} element
+             * @memberof SpinalDriveAppFileExplorerBrowserSTAdmin
+             */
+            action(obj) {
+                let authService = obj.scope.injector.get('authService');
+                let fs_path = obj.scope.fs_path;
+                let username = authService.get_user().username;
+                let path = '/__users__/' + username;
+                for (var i = 1; i < fs_path.length; i++) {
+                    path += '/' + fs_path[i].name;
+                }
+                path += '/' + obj.file.name;
+                let myWindow = window.open('', '');
+                let location = '/html/spinaltwin_admin/#/dashboard?path=' + btoa(path);
+                myWindow.document.location = location;
+                myWindow.focus();
+            }
+            /**
+             * method to know if the app is needed to be shown.
+             * @param {Object} d node of the tree selectionned
+             * @returns {boolean}
+             * @memberof SpinalDriveAppFileExplorerBrowserSTAdmin
+             */
+            is_shown(d) {
+                if (d && d.file && d.file._server_id) {
+                    let file = anyWin.FileSystem._objects[d.file._server_id];
+                    if (file && file instanceof File) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        anyWin.spinalDrive_Env.add_applications('FileExplorer', new SpinalDriveAppFileExplorerBrowserSTAdmin());
     },
 ]);
 //# sourceMappingURL=DigitalTwinButtons.js.map

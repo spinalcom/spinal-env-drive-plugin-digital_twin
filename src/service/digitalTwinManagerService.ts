@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2018 SpinalCom - www.spinalcom.com
  *
@@ -36,274 +35,388 @@ import {
 import matchKnownExt from '../utils/knownExt';
 import { BimFileService, AssetFile } from './BimFileService';
 import { fileVersionState } from './fileVersionState';
-import { DIGITAL_TWIN_FILE_MODEL_TYPE, DIGITAL_TWIN_PANEL_TITLE } from '../contant';
+import {
+  DIGITAL_TWIN_FILE_MODEL_TYPE,
+  DIGITAL_TWIN_PANEL_TITLE,
+  SPINALTWIN_ADMIN_SERVICE_ROLE_RELATION_NAME,
+  SPINALTWIN_ADMIN_SERVICE_APP_RELATION_TYPE_PTR_LST,
+} from '../contant';
 
 angular
   .module('app.services')
   .controller(digitalTwinCtrl.ctrlName, digitalTwinCtrl.ctrl);
 
-angular
-  .module('app.services')
-  .factory('digitalTwinManagerService', [
-    'goldenLayoutService', '$q', '$templateCache', '$http', 'spinalFileSystem',
-    function (goldenLayoutService, $q, $templateCache, $http, spinalFileSystem) {
-      let lastGraph: SpinalGraph<any> = null;
-      const bimFileService = new BimFileService(onChangeModel);
-      const loadTemplateFunc = (uri: string, name: string) => {
-        return $http.get(uri).then(
-          response => {
-            $templateCache.put(name, response.data);
-          },
-          () => {
-            console.error(`Cannot load the file ${uri}`);
-          },
-        );
-      };
-      const toload = [
-        {
-          uri: digitalTwinCtrl.templateUri,
-          name: digitalTwinCtrl.templateName,
+angular.module('app.services').factory('digitalTwinManagerService', [
+  'goldenLayoutService',
+  '$q',
+  '$templateCache',
+  '$http',
+  'spinalFileSystem',
+  function (goldenLayoutService, $q, $templateCache, $http, spinalFileSystem) {
+    let lastGraph: SpinalGraph<any> = null;
+    const bimFileService = new BimFileService(onChangeModel);
+    const loadTemplateFunc = (uri: string, name: string) => {
+      return $http.get(uri).then(
+        (response) => {
+          $templateCache.put(name, response.data);
         },
-      ];
-      let initPromise = null;
-      const init = (): Promise<void> => {
-        if (initPromise !== null) return initPromise.promise;
-        initPromise = $q.defer();
-        $q.all(toload.map((elem) => {
+        () => {
+          console.error(`Cannot load the file ${uri}`);
+        }
+      );
+    };
+    const toload = [
+      {
+        uri: digitalTwinCtrl.templateUri,
+        name: digitalTwinCtrl.templateName,
+      },
+    ];
+    let initPromise = null;
+    const init = (): Promise<void> => {
+      if (initPromise !== null) return initPromise.promise;
+      initPromise = $q.defer();
+      $q.all(
+        toload.map((elem) => {
           return loadTemplateFunc(elem.uri, elem.name);
-        })).then(() => {
+        })
+      )
+        .then(() => {
           initPromise.resolve();
-        }).catch((e) => {
+        })
+        .catch((e) => {
           console.error(e);
           const prom = initPromise;
           initPromise = null;
           prom.reject();
         });
 
-        return initPromise.promise;
-      };
+      return initPromise.promise;
+    };
 
-      const openPanel = (file: spinal.File<any>): Promise<any> => {
-        return factory.init().then(() => {
-          const oldFile = factory.lastFile;
-          factory.lastFile = file;
-          if (factory.controllerOnChange === null) {
-            const cfg = {
-              isClosable: true,
-              title: DIGITAL_TWIN_PANEL_TITLE,
-              type: 'component',
-              componentName: 'SpinalHome',
-              width: 20,
-              componentState: {
-                template: digitalTwinCtrl.templateName,
-                module: 'app.controllers',
-                controller: digitalTwinCtrl.ctrlName,
-              },
-            };
-            goldenLayoutService.createChild(cfg);
-            function onItemDestroy(item) {
-              if (item && item.config && item.config.componentState &&
-                item.config.componentState.controller &&
-                item.config.componentState.controller === digitalTwinCtrl.ctrlName) {
-                controllerDestroy();
-                goldenLayoutService.myLayout.off('itemDestroyed', onItemDestroy);
-              }
+    const openPanel = (file: spinal.File<any>): Promise<any> => {
+      return factory.init().then(() => {
+        const oldFile = factory.lastFile;
+        factory.lastFile = file;
+        if (factory.controllerOnChange === null) {
+          const cfg = {
+            isClosable: true,
+            title: DIGITAL_TWIN_PANEL_TITLE,
+            type: 'component',
+            componentName: 'SpinalHome',
+            width: 20,
+            componentState: {
+              template: digitalTwinCtrl.templateName,
+              module: 'app.controllers',
+              controller: digitalTwinCtrl.ctrlName,
+            },
+          };
+          goldenLayoutService.createChild(cfg);
+          function onItemDestroy(item) {
+            if (
+              item &&
+              item.config &&
+              item.config.componentState &&
+              item.config.componentState.controller &&
+              item.config.componentState.controller === digitalTwinCtrl.ctrlName
+            ) {
+              controllerDestroy();
+              goldenLayoutService.myLayout.off('itemDestroyed', onItemDestroy);
             }
-            goldenLayoutService.myLayout.on('itemDestroyed', onItemDestroy);
-          } else if (oldFile !== factory.lastFile) {
-            return loadModelPtr(factory.lastFile._ptr)
-              .then((graph: SpinalGraph<any>) => {
-                lastGraph = graph;
-                bimFileService.resetProcess();
-                SpinalGraphService.nodes = {};
-                SpinalGraphService.nodesInfo = {};
-                return SpinalGraphService.setGraph(graph);
-              }).then(() => bimFileService.addToProces(lastGraph, false)
-              );
           }
-        });
-      };
-
-      function getState(assetFiles: AssetFile) {
-        const fileModel = assetFiles.FileVersionModel;
-        if (typeof fileModel.state === 'undefined') {
-          return 'Not Converted.';
+          goldenLayoutService.myLayout.on('itemDestroyed', onItemDestroy);
+        } else if (oldFile !== factory.lastFile) {
+          return loadModelPtr(factory.lastFile._ptr)
+            .then((graph: SpinalGraph<any>) => {
+              lastGraph = graph;
+              bimFileService.resetProcess();
+              SpinalGraphService.nodes = {};
+              SpinalGraphService.nodesInfo = {};
+              return SpinalGraphService.setGraph(graph);
+            })
+            .then(() => bimFileService.addToProces(lastGraph, false));
         }
+      });
+    };
 
-        const state = fileModel.state.get();
-        for (let idx = 0; idx < fileVersionState.length; idx++) {
-          if (idx === state) {
-            return fileVersionState[idx];
-          }
-        }
+    function getState(assetFiles: AssetFile) {
+      const fileModel = assetFiles.FileVersionModel;
+      if (typeof fileModel.state === 'undefined') {
         return 'Not Converted.';
       }
-      async function onChangeModel() {
-        if (factory.controllerOnChange === null) return;
-        const assetFiles = await bimFileService.getAssetFiles();
-        const res = assetFiles.map((assetFiles) => {
-          return {
-            name: assetFiles.name,
-            nodeId: assetFiles.nodeId,
-            state: getState(assetFiles),
-            description: assetFiles.FileVersionModel.description.get(),
-            versionId: assetFiles.FileVersionModel.versionId.get(),
-            date: assetFiles.FileVersionModel.date.get(),
-          };
-        });
 
-        factory.controllerOnChange({
-          filename: factory.lastFile.name.get(),
-          assetFiles: res,
-        });
+      const state = fileModel.state.get();
+      for (let idx = 0; idx < fileVersionState.length; idx++) {
+        if (idx === state) {
+          return fileVersionState[idx];
+        }
       }
+      return 'Not Converted.';
+    }
+    async function onChangeModel() {
+      if (factory.controllerOnChange === null) return;
+      const assetFiles = await bimFileService.getAssetFiles();
+      const res = assetFiles.map((assetFiles) => {
+        return {
+          name: assetFiles.name,
+          nodeId: assetFiles.nodeId,
+          state: getState(assetFiles),
+          description: assetFiles.FileVersionModel.description.get(),
+          versionId: assetFiles.FileVersionModel.versionId.get(),
+          date: assetFiles.FileVersionModel.date.get(),
+        };
+      });
 
-      const controllerOpenRegister = (funcOnChange, funcOnDestroy): Promise<any> => {
-        factory.controllerOnChange = funcOnChange;
-        factory.controllerDestroyFunc = funcOnDestroy;
-        return loadModelPtr(factory.lastFile._ptr)
-          .then((graph: SpinalGraph<any>) => {
-            lastGraph = graph;
-            return SpinalGraphService.setGraph(lastGraph).then((e) => {
-              bimFileService.addToProces(graph, false);
-              return e;
-            });
+      factory.controllerOnChange({
+        filename: factory.lastFile.name.get(),
+        assetFiles: res,
+      });
+    }
+
+    const controllerOpenRegister = (
+      funcOnChange,
+      funcOnDestroy
+    ): Promise<any> => {
+      factory.controllerOnChange = funcOnChange;
+      factory.controllerDestroyFunc = funcOnDestroy;
+      return loadModelPtr(factory.lastFile._ptr).then(
+        (graph: SpinalGraph<any>) => {
+          lastGraph = graph;
+          return SpinalGraphService.setGraph(lastGraph).then((e) => {
+            bimFileService.addToProces(graph, false);
+            return e;
           });
-      };
-      const controllerDestroy = () => {
-        bimFileService.resetProcess();
-        factory.controllerDestroyFunc();
-        factory.controllerOnChange = null;
-      };
-      const newDigitalTwin = (directory: spinal.Directory<any>, filename: string) => {
-        const graph = new SpinalGraph();
-        directory.force_add_file(filename, graph, {
-          model_type: DIGITAL_TWIN_FILE_MODEL_TYPE,
-        });
-      };
+        }
+      );
+    };
+    const controllerDestroy = () => {
+      bimFileService.resetProcess();
+      factory.controllerDestroyFunc();
+      factory.controllerOnChange = null;
+    };
+    const newDigitalTwin = (
+      directory: spinal.Directory<any>,
+      filename: string
+    ) => {
+      const graph = new SpinalGraph();
+      directory.force_add_file(filename, graph, {
+        model_type: DIGITAL_TWIN_FILE_MODEL_TYPE,
+      });
+    };
 
-      const newSpinalRoleManager = (directory: spinal.Directory<any>, filename: string) => {
-        const graph = new SpinalGraph("SpinalTwinAdmin");
-        const DataListContext = new SpinalContext("DataList");
+    const newSpinalRoleManager = (
+      directory: spinal.Directory<any>,
+      filename: string
+    ) => {
+      const graph = new SpinalGraph('SpinalTwinAdmin');
+      const DataListContext = new SpinalContext('DataList');
 
-        const SpinaltwinDescContext = new SpinalContext("SpinalTwinDescription");
-        const UserProfileContext = new SpinalContext("UserProfile");
-        const UserListContext = new SpinalContext("UserList");
-        const RoleListContext = new SpinalContext("RoleList");
-        graph.addContext(DataListContext);
-        graph.addContext(SpinaltwinDescContext);
-        graph.addContext(UserProfileContext);
-        graph.addContext(UserListContext);
-        graph.addContext(RoleListContext);
+      const SpinaltwinDescContext = new SpinalContext('SpinalTwinDescription');
+      const UserProfileContext = new SpinalContext('UserProfile');
+      const UserListContext = new SpinalContext('UserList');
+      const RoleListContext = new SpinalContext('RoleList');
+      graph.addContext(DataListContext);
+      graph.addContext(SpinaltwinDescContext);
+      graph.addContext(UserProfileContext);
+      graph.addContext(UserListContext);
+      graph.addContext(RoleListContext);
 
-        const dataRoomNode = new SpinalNode("DataRoom");
-        const maintenanceBookNode = new SpinalNode("MaintenanceBook");
-        const operationCenterNode = new SpinalNode("OperationBook");
+      const read = new SpinalNode('Lecture');
+      const write = new SpinalNode('Ecriture');
+      const deleted = new SpinalNode('Suppression');
 
-        SpinaltwinDescContext.addChildInContext(dataRoomNode, "hasGroupApplication", "PtrLst");
-        SpinaltwinDescContext.addChildInContext(maintenanceBookNode, "hasGroupApplication", "PtrLst");
-        SpinaltwinDescContext.addChildInContext(operationCenterNode, "hasGroupApplication", "PtrLst");
+      RoleListContext.addChildInContext(
+        read,
+        SPINALTWIN_ADMIN_SERVICE_ROLE_RELATION_NAME,
+        SPINALTWIN_ADMIN_SERVICE_APP_RELATION_TYPE_PTR_LST
+      );
+      RoleListContext.addChildInContext(
+        write,
+        SPINALTWIN_ADMIN_SERVICE_ROLE_RELATION_NAME,
+        SPINALTWIN_ADMIN_SERVICE_APP_RELATION_TYPE_PTR_LST
+      );
+      RoleListContext.addChildInContext(
+        deleted,
+        SPINALTWIN_ADMIN_SERVICE_ROLE_RELATION_NAME,
+        SPINALTWIN_ADMIN_SERVICE_APP_RELATION_TYPE_PTR_LST
+      );
 
-        // App for DataRoom
-        const EquipmentCenter = new SpinalNode("EquipmentCenter");
-        const DescriptionCenter = new SpinalNode("DescriptionCenter");
-        const SpaceCenter = new SpinalNode("SpaceCenter");
+      const dataRoomNode = new SpinalNode('DataRoom');
+      const maintenanceBookNode = new SpinalNode('MaintenanceBook');
+      const operationCenterNode = new SpinalNode('OperationBook');
 
-        dataRoomNode.addChildInContext(EquipmentCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
-        dataRoomNode.addChildInContext(DescriptionCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
-        dataRoomNode.addChildInContext(SpaceCenter, "hasApplicationDataRoom", "PtrLst", SpinaltwinDescContext);
+      SpinaltwinDescContext.addChildInContext(
+        dataRoomNode,
+        'hasGroupApplication',
+        'PtrLst'
+      );
+      SpinaltwinDescContext.addChildInContext(
+        maintenanceBookNode,
+        'hasGroupApplication',
+        'PtrLst'
+      );
+      SpinaltwinDescContext.addChildInContext(
+        operationCenterNode,
+        'hasGroupApplication',
+        'PtrLst'
+      );
 
-        // App for MaintenanceBook
-        const TicketCenter = new SpinalNode("TicketCenter");
-        const NoteCenter = new SpinalNode("NoteCenter");
-        const AgendaCenter = new SpinalNode("AgendaCenter");
+      // App for DataRoom
+      const EquipmentCenter = new SpinalNode('EquipmentCenter');
+      const DescriptionCenter = new SpinalNode('DescriptionCenter');
+      const SpaceCenter = new SpinalNode('SpaceCenter');
 
-        maintenanceBookNode.addChildInContext(TicketCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
-        maintenanceBookNode.addChildInContext(NoteCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
-        maintenanceBookNode.addChildInContext(AgendaCenter, "hasApplicationMaintenanceBook", "PtrLst", SpinaltwinDescContext);
+      dataRoomNode.addChildInContext(
+        EquipmentCenter,
+        'hasApplicationDataRoom',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
+      dataRoomNode.addChildInContext(
+        DescriptionCenter,
+        'hasApplicationDataRoom',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
+      dataRoomNode.addChildInContext(
+        SpaceCenter,
+        'hasApplicationDataRoom',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
 
-        // App for OperationCenter
-        const InsightCenter = new SpinalNode("InsightCenter");
-        const ControlCenter = new SpinalNode("ControlCenter");
-        const AlarmCenter = new SpinalNode("AlarmCenter");
-        const EnergyCenter = new SpinalNode("EnergyCenter");
+      // App for MaintenanceBook
+      const TicketCenter = new SpinalNode('TicketCenter');
+      const NoteCenter = new SpinalNode('NoteCenter');
+      const AgendaCenter = new SpinalNode('AgendaCenter');
 
-        operationCenterNode.addChildInContext(InsightCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
-        operationCenterNode.addChildInContext(ControlCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
-        operationCenterNode.addChildInContext(AlarmCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
-        operationCenterNode.addChildInContext(EnergyCenter, "hasApplicationOperation", "PtrLst", SpinaltwinDescContext);
+      maintenanceBookNode.addChildInContext(
+        TicketCenter,
+        'hasApplicationMaintenanceBook',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
+      maintenanceBookNode.addChildInContext(
+        NoteCenter,
+        'hasApplicationMaintenanceBook',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
+      maintenanceBookNode.addChildInContext(
+        AgendaCenter,
+        'hasApplicationMaintenanceBook',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
 
-        directory.force_add_file(filename, graph, {
-            model_type: "SpinalTwin Admin",
-        });
-      };
+      // App for OperationCenter
+      const InsightCenter = new SpinalNode('InsightCenter');
+      const ControlCenter = new SpinalNode('ControlCenter');
+      const AlarmCenter = new SpinalNode('AlarmCenter');
+      const EnergyCenter = new SpinalNode('EnergyCenter');
 
-      const getFilesDropped = (): {
-        fileMatch: spinal.File<any>[],
-        fileNotMatch: spinal.File<any>[],
-      } => {
-        const fileMatch = [];
-        const fileNotMatch = [];
-        const selected = spinalFileSystem.FE_selected_drag;
-        if (selected && selected.length > 0) { // change to multiple selection later
-          for (let idx = 0; idx < selected.length; idx++) {
-            const fileToPush = selected[idx];
-            let match = false;
-            const modelFile = FileSystem._objects[fileToPush._server_id];
-            // check if file then if file == 'Path' or 'HttpPath'
-            if (modelFile && modelFile instanceof File &&
-              modelFile._info && modelFile._info.model_type) {
-              const modelType = modelFile._info.model_type.get();
-              if (modelType === 'Path' || modelType === 'HttpPath') {
-                const filename = modelFile.name.get();
-                if (matchKnownExt(filename) === true) {
-                  match = true;
-                  fileMatch.push(modelFile);
-                }
+      operationCenterNode.addChildInContext(
+        InsightCenter,
+        'hasApplicationOperation',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
+      operationCenterNode.addChildInContext(
+        ControlCenter,
+        'hasApplicationOperation',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
+      operationCenterNode.addChildInContext(
+        AlarmCenter,
+        'hasApplicationOperation',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
+      operationCenterNode.addChildInContext(
+        EnergyCenter,
+        'hasApplicationOperation',
+        'PtrLst',
+        SpinaltwinDescContext
+      );
+
+      directory.force_add_file(filename, graph, {
+        model_type: 'SpinalTwin Admin',
+      });
+    };
+
+    const getFilesDropped = (): {
+      fileMatch: spinal.File<any>[];
+      fileNotMatch: spinal.File<any>[];
+    } => {
+      const fileMatch = [];
+      const fileNotMatch = [];
+      const selected = spinalFileSystem.FE_selected_drag;
+      if (selected && selected.length > 0) {
+        // change to multiple selection later
+        for (let idx = 0; idx < selected.length; idx++) {
+          const fileToPush = selected[idx];
+          let match = false;
+          const modelFile = FileSystem._objects[fileToPush._server_id];
+          // check if file then if file == 'Path' or 'HttpPath'
+          if (
+            modelFile &&
+            modelFile instanceof File &&
+            modelFile._info &&
+            modelFile._info.model_type
+          ) {
+            const modelType = modelFile._info.model_type.get();
+            if (modelType === 'Path' || modelType === 'HttpPath') {
+              const filename = modelFile.name.get();
+              if (matchKnownExt(filename) === true) {
+                match = true;
+                fileMatch.push(modelFile);
               }
             }
-            if (match === false) {
-              fileNotMatch.push(modelFile);
-            }
+          }
+          if (match === false) {
+            fileNotMatch.push(modelFile);
           }
         }
-        return {
-          fileMatch,
-          fileNotMatch,
-        };
+      }
+      return {
+        fileMatch,
+        fileNotMatch,
       };
+    };
 
-      const addFileDropped = () => {
-        const filesDropped = getFilesDropped();
-        const filesMatch = filesDropped.fileMatch;
-        return Promise.all(filesMatch.map((fileMatch) => {
+    const addFileDropped = () => {
+      const filesDropped = getFilesDropped();
+      const filesMatch = filesDropped.fileMatch;
+      return Promise.all(
+        filesMatch.map((fileMatch) => {
           return bimFileService.addAssetFile(fileMatch);
-        }));
-      };
-      const removeAssetFile = (nodeId: string) => {
-        return bimFileService.removeAssetFile(nodeId);
-      };
-      const convertAsssetFile = (nodeId: string) => {
-        return bimFileService.convertAsssetFile(nodeId);
-      };
+        })
+      );
+    };
+    const removeAssetFile = (nodeId: string) => {
+      return bimFileService.removeAssetFile(nodeId);
+    };
+    const convertAsssetFile = (nodeId: string) => {
+      return bimFileService.convertAsssetFile(nodeId);
+    };
 
-      init();
-      const factory = {
-        convertAsssetFile,
-        removeAssetFile,
-        addFileDropped,
-        getFilesDropped,
-        init,
-        newDigitalTwin,
-        newSpinalRoleManager,
-        openPanel,
-        controllerOpenRegister,
-        controllerDestroy,
-        controllerOnChange: null,
-        controllerDestroyFunc: null,
-        lastFile: null,
-      };
+    init();
+    const factory = {
+      convertAsssetFile,
+      removeAssetFile,
+      addFileDropped,
+      getFilesDropped,
+      init,
+      newDigitalTwin,
+      newSpinalRoleManager,
+      openPanel,
+      controllerOpenRegister,
+      controllerDestroy,
+      controllerOnChange: null,
+      controllerDestroyFunc: null,
+      lastFile: null,
+    };
 
-      return factory;
-    },
-  ]);
+    return factory;
+  },
+]);
