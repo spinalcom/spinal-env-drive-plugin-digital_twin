@@ -7,6 +7,8 @@ import {
   DIGITAL_TWIN_CREATE_MANAGER_BUTTON_DESCRIPTION,
 } from '../contant';
 
+import { SpinalTwinServiceGraph } from 'spinal-service-spinaltwin-admin';
+
 const spinalEnvDriveCore = require('spinal-env-drive-core');
 require('spinal-core-connectorjs');
 const angular = require('angular');
@@ -117,9 +119,8 @@ angular.module('app.controllers').run([
 
         if (obj && obj.model && obj.model._server_id) {
           const directory = FileSystem._objects[obj.model._server_id];
-          digitalTwinManagerService.newSpinalRoleManager(
-            directory,
-            'SpinalTwin Admin'
+          SpinalTwinServiceGraph.init(directory, 'SpinalTwin Admin').catch(
+            console.error
           );
         } else {
           console.log('Error Directory model not foud');

@@ -16,7 +16,8 @@
     "spinal-core-connectorjs_type": "git+https://github.com/spinalcom/spinal-core-connectorjs_type.git",
     "spinal-env-drive-core": "git+https://github.com/spinalcom/spinal-env-drive-core.git",
     "spinal-env-viewer-graph-service": "git+https://github.com/spinalcom/Spinal-Graph-Service.git",
-    "spinal-model-file_version_model": "git+https://github.com/spinalcom/spinal-model-file_version_model.git"
+    "spinal-model-file_version_model": "git+https://github.com/spinalcom/spinal-model-file_version_model.git",
+    "spinal-service-spinaltwin-admin": "git+https://github.com/spinalcom/spinal-service-spinaltwin-admin.git"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",

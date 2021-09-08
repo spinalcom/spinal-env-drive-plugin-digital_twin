@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const contant_1 = require("../contant");
+const spinal_service_spinaltwin_admin_1 = require("spinal-service-spinaltwin-admin");
 const spinalEnvDriveCore = require('spinal-env-drive-core');
 require('spinal-core-connectorjs');
 const angular = require('angular');
@@ -74,7 +75,7 @@ angular.module('app.controllers').run([
                 };
                 if (obj && obj.model && obj.model._server_id) {
                     const directory = spinal_core_connectorjs_type_1.FileSystem._objects[obj.model._server_id];
-                    digitalTwinManagerService.newSpinalRoleManager(directory, 'SpinalTwin Admin');
+                    spinal_service_spinaltwin_admin_1.SpinalTwinServiceGraph.init(directory, 'SpinalTwin Admin').catch(console.error);
                 }
                 else {
                     console.log('Error Directory model not foud');
