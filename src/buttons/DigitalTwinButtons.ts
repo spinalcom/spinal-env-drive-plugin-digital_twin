@@ -167,7 +167,7 @@ angular.module('app.controllers').run([
         }
         path += '/' + obj.file.name;
         let myWindow: any = window.open('', '');
-        let location = '/html/spinaltwin_admin/#/dashboard?path=' + btoa(path);
+        let location = '/html/spinaltwin-admin/#/dashboard?path=' + btoa(path);
         myWindow.document.location = location;
         myWindow.focus();
       }
