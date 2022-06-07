@@ -100,42 +100,6 @@ angular.module('app.controllers').run([
       new SpinalDriveAppCurrFileExplorerCreateDigitalTwinManager()
     );
 
-    // create digital twin in FE top menu
-    class SpinalDriveAppCurrFileExplorerCreateSpinalTwinGraph extends spinalEnvDriveCore.SpinalDrive_App {
-      constructor() {
-        super(
-          'SpinalTwinManager',
-          'Create SpinalTwin Admin',
-          37,
-          'assignment_ind',
-          'Create SpinalTwin Admin'
-        );
-        this.order_priority = 0;
-      }
-      action(obj) {
-        obj.original = {
-          model: obj.model._server_id,
-        };
-
-        if (obj && obj.model && obj.model._server_id) {
-          const directory = FileSystem._objects[obj.model._server_id];
-          SpinalTwinServiceGraph.init(directory, 'SpinalTwin Admin').catch(
-            console.error
-          );
-        } else {
-          console.log('Error Directory model not foud');
-        }
-      }
-
-      is_shown(file) {
-        return true;
-      }
-    }
-    anyWin.spinalDrive_Env.add_applications(
-      'FileExplorerCurrDir',
-      new SpinalDriveAppCurrFileExplorerCreateSpinalTwinGraph()
-    );
-
     class SpinalDriveAppFileExplorerBrowserSTAdmin extends spinalEnvDriveCore.SpinalDrive_App {
       /**
        * Creates an instance of SpinalDriveAppFileExplorerBrowserSTAdmin.
@@ -144,10 +108,10 @@ angular.module('app.controllers').run([
       constructor() {
         super(
           'OpenSTAdminFileExplorer',
-          'ST Admin',
+          'Bos Configuration',
           '10',
           'location_city',
-          'ST Admin'
+          'Bos Configuration'
         );
         this.order_priority = 5;
       }

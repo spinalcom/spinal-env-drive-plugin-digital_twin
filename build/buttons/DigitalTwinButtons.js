@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const contant_1 = require("../contant");
-const spinal_service_spinaltwin_admin_1 = require("spinal-service-spinaltwin-admin");
 const spinalEnvDriveCore = require('spinal-env-drive-core');
 require('spinal-core-connectorjs');
 const angular = require('angular');
@@ -63,36 +62,13 @@ angular.module('app.controllers').run([
             }
         }
         anyWin.spinalDrive_Env.add_applications('FileExplorerCurrDir', new SpinalDriveAppCurrFileExplorerCreateDigitalTwinManager());
-        // create digital twin in FE top menu
-        class SpinalDriveAppCurrFileExplorerCreateSpinalTwinGraph extends spinalEnvDriveCore.SpinalDrive_App {
-            constructor() {
-                super('SpinalTwinManager', 'Create SpinalTwin Admin', 37, 'assignment_ind', 'Create SpinalTwin Admin');
-                this.order_priority = 0;
-            }
-            action(obj) {
-                obj.original = {
-                    model: obj.model._server_id,
-                };
-                if (obj && obj.model && obj.model._server_id) {
-                    const directory = spinal_core_connectorjs_type_1.FileSystem._objects[obj.model._server_id];
-                    spinal_service_spinaltwin_admin_1.SpinalTwinServiceGraph.init(directory, 'SpinalTwin Admin').catch(console.error);
-                }
-                else {
-                    console.log('Error Directory model not foud');
-                }
-            }
-            is_shown(file) {
-                return true;
-            }
-        }
-        anyWin.spinalDrive_Env.add_applications('FileExplorerCurrDir', new SpinalDriveAppCurrFileExplorerCreateSpinalTwinGraph());
         class SpinalDriveAppFileExplorerBrowserSTAdmin extends spinalEnvDriveCore.SpinalDrive_App {
             /**
              * Creates an instance of SpinalDriveAppFileExplorerBrowserSTAdmin.
              * @memberof SpinalDriveAppFileExplorerBrowserSTAdmin
              */
             constructor() {
-                super('OpenSTAdminFileExplorer', 'ST Admin', '10', 'location_city', 'ST Admin');
+                super('OpenSTAdminFileExplorer', 'Bos Configuration', '10', 'location_city', 'Bos Configuration');
                 this.order_priority = 5;
             }
             /**
